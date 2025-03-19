@@ -1,4 +1,4 @@
-# rtf.md – Reasoning Trace Framework
+# rtf.md – Reasoning Trace Framework through Markdown
 
 <p align="center">
   <img src="assets/rtf.md.logo.png" alt="rtf.md Logo" width="250"/>
