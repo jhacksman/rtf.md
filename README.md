@@ -2,11 +2,45 @@
 
 ## Project Overview
 
-RTF.md is a comprehensive framework for capturing the reasoning traces behind every file in a GitHub repository. Unlike traditional documentation, RTF.md preserves the actual thought processes, decision pathways, and context that led to code creation and changes, addressing technical debt by making implicit knowledge explicit.
+RTF.md is a comprehensive framework for capturing the reasoning traces behind every file in a code repository. Unlike traditional documentation, RTF.md preserves the actual thought processes, decision pathways, and context that led to code creation and changes, addressing technical debt by making implicit knowledge explicit.
 
 ## Core Concept
 
-For every file in a repository, RTF.md creates a corresponding hidden file (e.g., `.main.py.md` for `main.py`) that documents the complete reasoning journey using a structured tag system. This system is inspired by AI reasoning models but adapted for the messy reality of software development.
+For every file in a repository, RTF.md creates a corresponding reasoning trace file in a centralized `rtfmd` directory. These files document the complete reasoning journey using a structured tag system inspired by AI reasoning models but adapted for the messy reality of software development.
+
+## Repository Structure
+
+```
+repository/
+├── src/
+│   ├── components/
+│   │   └── Button.jsx
+│   └── utils/
+│       └── formatDate.js
+├── rtfmd/
+│   ├── files/
+│   │   ├── src/
+│   │   │   ├── components/
+│   │   │   │   └── Button.jsx.md
+│   │   │   └── utils/
+│   │   │       └── formatDate.js.md
+│   ├── knowledge/
+│   │   ├── frontend/
+│   │   │   └── react-component-patterns.md
+│   │   ├── security/
+│   │   │   └── authentication-best-practices.md
+│   │   └── standards/
+│   │       └── code-style-guide.md
+│   └── decisions/
+│       └── architectural-decisions.md
+└── README.md
+```
+
+The `rtfmd` directory contains:
+
+1. **files/**: Mirrors the repository structure with reasoning trace files for each code file
+2. **knowledge/**: Domain-specific knowledge documents organized by category
+3. **decisions/**: High-level architectural and design decision records
 
 ## Tag System
 
@@ -99,6 +133,27 @@ The RTF.md tag system is organized into categories that reflect the actual exper
   [Key realizations]
   [How they affected implementation]
 </insight>
+```
+
+### Human Priors Tags
+```markdown
+<domain-knowledge>
+  [Specialized knowledge applied]
+  [Industry-specific considerations]
+  [How domain expertise influenced decisions]
+</domain-knowledge>
+
+<mental-model>
+  [Conceptual frameworks used]
+  [How mental models guided implementation]
+  [Evolution of understanding during development]
+</mental-model>
+
+<intuition>
+  [Gut feelings that influenced decisions]
+  [How intuition was validated or disproven]
+  [Experience-based shortcuts taken]
+</intuition>
 ```
 
 ### Context Tags
@@ -211,6 +266,14 @@ The RTF.md tag system is organized into categories that reflect the actual exper
 </follow-up>
 ```
 
+### Knowledge Reference Tags
+```markdown
+<knowledge-refs>
+  [Link to relevant knowledge document](/rtfmd/knowledge/domain/document.md) - Last updated YYYY-MM-DD
+  [Link to architectural decision](/rtfmd/decisions/decision-record.md) - Last updated YYYY-MM-DD
+</knowledge-refs>
+```
+
 ## Implementation Approach
 
 RTF.md is designed to be implemented using:
@@ -228,11 +291,14 @@ RTF.md is designed to be implemented using:
 A typical RTF.md file contains only the relevant tags for that particular file and situation. Tags are used contextually rather than trying to fill every tag for every file.
 
 Example pattern for a bug fix:
+
 ```markdown
 <metadata>
   author: developer-id-123
   timestamp: 2025-03-15T14:32:00Z
   prompt: "Fix authentication failure on mobile devices"
+  requestor: product-manager-456
+  requestor-context: "High priority, customers are reporting login failures"
 </metadata>
 
 <bug>
@@ -253,22 +319,35 @@ Example pattern for a bug fix:
   Added dedicated tablet detection logic.
 </edge-case>
 
-<security>
-  Implemented password hashing with BCrypt.
-  Added input validation to prevent SQL injection.
-  Used HTTPS for all API endpoints.
-</security>
+<intuition>
+  Had a hunch that the orientation might be related because similar issues
+  occurred in previous projects with responsive designs.
+  Validated by testing in both orientations explicitly.
+</intuition>
 
-<code-review-feedback>
-  Reviewer suggested adding more robust error handling.
-  Added try/catch blocks with specific error messages.
-</code-review-feedback>
+<knowledge-refs>
+  [Mobile Viewport Best Practices](/rtfmd/knowledge/frontend/mobile-viewport.md) - Last updated 2025-01-10
+</knowledge-refs>
 
 <follow-up>
   Need comprehensive testing across device types.
   Consider refactoring entire validation module.
 </follow-up>
 ```
+
+## Knowledge Repository
+
+The `/rtfmd/knowledge/` directory contains domain-specific information relevant to the codebase:
+
+1. **Technology Guides**: Best practices, patterns, and conventions for technologies used in the project
+
+2. **Domain Models**: Explanations of business domain concepts and their relationships
+
+3. **API References**: Current documentation for internal/external APIs used by the codebase
+
+4. **Design Standards**: UI/UX guidelines, accessibility standards, and design systems
+
+Each knowledge document follows a similar tagged structure but focuses on providing context rather than reasoning traces. All knowledge documents include a "Last Updated" timestamp to provide temporal context.
 
 ## Benefits
 
@@ -277,17 +356,41 @@ Example pattern for a bug fix:
 3. **Context Transfer**: New developers understand not just code but thinking behind it
 4. **LLM Enhancement**: Provides rich context for AI systems to make better predictions
 5. **Historical Intelligence**: Builds a repository of problem-solving approaches
+6. **Domain Knowledge Preservation**: Captures specialized expertise that might otherwise be lost
 
 ## Getting Started
 
 To implement RTF.md in your repository:
 
-1. Create a `.github/workflows/rtf.yml` file that triggers reasoning trace generation
-2. Configure the workflow to use an LLM to generate traces for each committed file
-3. Review and enhance generated traces during code review
-4. Use the traces when onboarding new developers or making significant changes
+1. Create the initial directory structure:
+   ```bash
+   mkdir -p rtfmd/files rtfmd/knowledge rtfmd/decisions
+   ```
 
-## Example
+2. Create a `.github/workflows/rtf.yml` file that triggers reasoning trace generation
+   ```yaml
+   name: Generate RTF.md Traces
+   on:
+     push:
+       branches: [ main, develop ]
+   jobs:
+     generate-traces:
+       runs-on: ubuntu-latest
+       steps:
+         - uses: actions/checkout@v3
+         - name: Generate Reasoning Traces
+           uses: rtfmd/github-action@v1
+           with:
+             files: "changed"
+             llm-provider: "openai"
+             api-key: ${{ secrets.LLM_API_KEY }}
+   ```
+
+3. Configure the workflow to use an LLM to generate traces for each committed file
+4. Review and enhance generated traces during code review
+5. Use the traces when onboarding new developers or making significant changes
+
+## Examples
 
 See the [examples/](examples/) directory for sample reasoning traces across different scenarios:
 - Bug fixes
