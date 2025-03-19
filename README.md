@@ -1,7 +1,7 @@
 # rtf.md: Reasoning Trace Framework in Markdown
 
 <p align="center">
-  <img src="rtfmd/assets/rtfmd-logo.png" alt="RTF.md Logo" width="250"/>
+  <img src="assets/rtf.md.logo.png" alt="RTF.md Logo" width="250"/>
 </p>
 
 ## Project Overview
