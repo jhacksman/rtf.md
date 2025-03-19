@@ -1,12 +1,12 @@
-# RTF.md: Reasoning Trace Framework
+# rtf.md: Reasoning Trace Framework in Markdown
 
 ## Project Overview
 
-RTF.md is a comprehensive framework for capturing the reasoning traces behind every file in a code repository. Unlike traditional documentation, RTF.md preserves the actual thought processes, decision pathways, and context that led to code creation and changes, addressing technical debt by making implicit knowledge explicit.
+rtf.md is a comprehensive framework for capturing the reasoning traces behind every file in a code repository. Unlike traditional documentation, RTF.md preserves the actual thought processes, decision pathways, and context that led to code creation and changes, addressing technical debt by making implicit knowledge explicit.
 
 ## Core Concept
 
-For every file in a repository, RTF.md creates a corresponding reasoning trace file in a centralized `rtfmd` directory. These files document the complete reasoning journey using a structured tag system inspired by AI reasoning models but adapted for the messy reality of software development.
+For every file in a repository, rtf.md creates a corresponding reasoning trace file in a centralized `rtfmd` directory. These files document the complete reasoning journey using a structured tag system inspired by AI reasoning models but adapted for the messy reality of software development.
 
 ## Repository Structure
 
