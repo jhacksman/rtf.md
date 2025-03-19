@@ -119,6 +119,57 @@ The RTF.md tag system is organized into categories that reflect the actual exper
 </legacy-accommodation>
 ```
 
+### Code Quality Tags
+```markdown
+<code-convention>
+  [Coding standards followed]
+  [Style decisions made]
+  [Linting considerations]
+</code-convention>
+
+<testing-strategy>
+  [Test approach chosen]
+  [Coverage considerations]
+  [Edge cases specifically tested]
+</testing-strategy>
+
+<security>
+  [Security considerations]
+  [Vulnerability mitigations]
+  [Authentication/authorization decisions]
+</security>
+```
+
+### Collaboration Tags
+```markdown
+<code-review-feedback>
+  [Feedback received]
+  [Changes made in response]
+  [Justification for accepting/rejecting feedback]
+</code-review-feedback>
+
+<pair-programming>
+  [Collaborative insights]
+  [Role distribution]
+  [Consensus building process]
+</pair-programming>
+```
+
+### Learning Tags
+```markdown
+<pattern-recognition>
+  [Design patterns identified]
+  [How patterns were applied]
+  [Pattern adaptation details]
+</pattern-recognition>
+
+<knowledge-gap>
+  [Areas where knowledge was lacking]
+  [How information was obtained]
+  [Learning resources used]
+</knowledge-gap>
+```
+
 ### Emotional/Situational Tags
 ```markdown
 <frustration>
@@ -201,6 +252,17 @@ Example pattern for a bug fix:
   Tablets with unusual aspect ratios were still failing.
   Added dedicated tablet detection logic.
 </edge-case>
+
+<security>
+  Implemented password hashing with BCrypt.
+  Added input validation to prevent SQL injection.
+  Used HTTPS for all API endpoints.
+</security>
+
+<code-review-feedback>
+  Reviewer suggested adding more robust error handling.
+  Added try/catch blocks with specific error messages.
+</code-review-feedback>
 
 <follow-up>
   Need comprehensive testing across device types.
