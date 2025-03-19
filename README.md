@@ -46,13 +46,72 @@ repository/
 │   │   └── standards/
 │   │       └── code-style-guide.md
 │   └── decisions/
-│       └── architectural-decisions.md
+│       └── auth-strategy.md
 └── README.md
 ```
 
 - **rtfmd/files/**: The shadow file system that mirrors the repository's structure
 - **rtfmd/knowledge/**: Domain-specific knowledge repository linked to from file-level reasoning traces
 - **rtfmd/decisions/**: Architectural and design decisions that impact multiple components
+
+## Architectural Decision Records in rtf.md
+
+The `rtfmd/decisions/` directory incorporates and extends the concept of Architectural Decision Records (ADRs) within the rtf.md framework. While traditional ADRs capture high-level design decisions as standalone documents, rtf.md integrates them into the broader cognitive substrate:
+
+```markdown
+<metadata>
+  title: Authentication Strategy
+  author: tech-lead-789
+  timestamp: 2025-02-10T09:15:00Z
+  status: accepted
+  related-files: [/src/auth/, /src/api/middleware/auth.js]
+</metadata>
+
+<context>
+  Our application needs to support both third-party OAuth providers and traditional
+  username/password authentication. We need to determine the optimal approach
+  that balances security, maintainability, and user experience.
+</context>
+
+<decision>
+  Implement a unified authentication service that abstracts provider-specific
+  logic behind a common interface. Use JWT for session management with short
+  expiration times and secure refresh token rotation.
+</decision>
+
+<alternatives>
+  1. Separate authentication paths for each provider
+  2. Session-based authentication with cookies
+  3. Delegating auth entirely to a third-party service
+</alternatives>
+
+<reasoning>
+  The unified approach gives us flexibility to add new providers without
+  changing the core authentication flow. JWT allows for stateless authentication
+  which improves scalability.
+</reasoning>
+
+<consequences>
+  - More complex initial implementation
+  - Better long-term maintainability
+  - Requires careful token management
+  - Enables future identity federation
+</consequences>
+
+<knowledge-refs>
+  [OWASP Authentication Best Practices](/rtfmd/knowledge/security/owasp-auth.md) - Last updated 2025-01-15
+  [JWT Security Considerations](/rtfmd/knowledge/security/jwt-security.md) - Last updated 2025-01-03
+</knowledge-refs>
+```
+
+These architectural decisions are:
+
+1. **Connected to Implementation**: Directly linked to the files they impact
+2. **Part of the Knowledge Graph**: Referenced from relevant file-level reasoning traces
+3. **Living Records**: Updated as architectural understanding evolves
+4. **Enhanced with Context**: Include links to knowledge documents that informed the decision
+
+By integrating ADRs into the rtf.md framework, architectural decisions become part of the continuous cognitive substrate rather than isolated documents. This allows language models to understand how high-level design choices influence specific implementation details throughout the codebase.
 
 ## Language Model Integration
 
@@ -352,6 +411,7 @@ A reasoning trace for a bug fix:
 
 <knowledge-refs>
   [Mobile Viewport Best Practices](/rtfmd/knowledge/frontend/mobile-viewport.md) - Last updated 2025-01-10
+  [Authentication Strategy](/rtfmd/decisions/auth-strategy.md) - Last updated 2025-02-10
 </knowledge-refs>
 
 <follow-up>
