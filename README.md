@@ -1,18 +1,18 @@
-# RTF.md – Reasoning Trace Framework
+# rtf.md – Reasoning Trace Framework
 
 <p align="center">
-  <img src="assets/rtf.md.logo.png" alt="RTF.md Logo" width="250"/>
+  <img src="assets/rtf.md.logo.png" alt="rtf.md Logo" width="250"/>
 </p>
 
 ## Project Vision
 
-RTF.md creates a cognitive substrate for code repositories, enabling language models to understand, evolve, and reason about software at a deeper level than ever before possible. By maintaining a parallel shadow file system with comprehensive reasoning traces, RTF.md transforms repositories from collections of instructions into knowledge networks with explicit thought processes.
+rtf.md creates a cognitive substrate for code repositories, enabling language models to understand, evolve, and reason about software at a deeper level than ever before possible. By maintaining a parallel shadow file system with comprehensive reasoning traces, rtf.md transforms repositories from collections of instructions into knowledge networks with explicit thought processes.
 
 This framework isn't just documentation — it's machine-accessible memory and reasoning that scales with the ever-increasing capabilities of language models. As context windows expand and reasoning becomes more sophisticated, the value of this cognitive layer grows exponentially.
 
 ## The Cognitive Substrate
 
-For every file in a repository, RTF.md maintains a corresponding reasoning trace file in a centralized `rtfmd/` directory. These shadow files capture the complete cognitive history of the code:
+For every file in a repository, rtf.md maintains a corresponding reasoning trace file in a centralized `rtfmd/` directory. These shadow files capture the complete cognitive history of the code:
 
 - The thought processes that led to its creation
 - The mental models that informed its design
@@ -56,7 +56,7 @@ repository/
 
 ## Language Model Integration
 
-RTF.md is designed for bidirectional interaction with language models:
+rtf.md is designed for bidirectional interaction with language models:
 
 1. **LMs as Consumers**: When a language model encounters a repository with an `rtfmd/` folder, it gains access to the complete reasoning context, enabling deeper understanding of code purpose and design.
 
@@ -66,7 +66,7 @@ This creates a virtuous cycle where better context leads to better understanding
 
 ## Comprehensive Tag System
 
-The RTF.md tag system creates a structured representation of human reasoning processes that language models can parse and extend:
+The rtf.md tag system creates a structured representation of human reasoning processes that language models can parse and extend:
 
 ### Metadata Tags
 ```markdown
@@ -362,7 +362,7 @@ A reasoning trace for a bug fix:
 
 ## Implementation
 
-To implement RTF.md in your repository:
+To implement rtf.md in your repository:
 
 1. Create the initial directory structure:
    ```bash
@@ -388,7 +388,7 @@ To implement RTF.md in your repository:
 
 ## Contributing
 
-Contributions to RTF.md are welcome! We're particularly interested in:
+Contributions to rtf.md are welcome! We're particularly interested in:
 - Real-world implementation experiences
 - Additional tag suggestions based on development scenarios
 - Tools for LM integration with the framework
