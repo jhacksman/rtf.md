@@ -1,20 +1,20 @@
-# rtf.md: Reasoning Trace Framework in Markdown
+# RTF.md – Reasoning Trace Framework in Markdown
 
 <p align="center">
   <img src="assets/rtf.md.logo.png" alt="RTF.md Logo" width="250"/>
 </p>
 
-## Project Overview
+## Project Vision
 
-rtf.md is a comprehensive framework for capturing the reasoning traces behind every file in a code repository. Unlike traditional documentation, RTF.md preserves the actual thought processes, decision pathways, and context that led to code creation and changes, addressing technical debt by making implicit knowledge explicit.
+RTF.md is not a separate documentation system like traditional ADRs—it is a **shadow file system** that lives alongside your code. For every file in your repository, a corresponding reasoning trace file is automatically maintained in the centralized `rtfmd/` folder. These "shadow files" capture the thought process, context, and decision-making behind every code change.
 
-## Core Concept
+Language models (LMs) are our primary mechanism for creating and updating these reasoning traces. When an LM processes a repository, it uses the instruction context provided by the project (including prompts, specifications, and previous traces) to generate a detailed rationale for changes. Crucially, the LM is designed to recognize the presence of the `rtfmd/` folder in the repository root; this signals that additional context is available and should be incorporated into the reasoning process.
 
-For every file in a repository, rtf.md creates a corresponding reasoning trace file in a centralized `rtfmd` directory. These files document the complete reasoning journey using a structured tag system inspired by AI reasoning models but adapted for the messy reality of software development.
+## Centralized Shadow File System
 
-## Repository Structure
+The reasoning traces for each file are stored in a dedicated `rtfmd/` folder that mirrors the repository structure. For example:
 
-```
+```plaintext
 repository/
 ├── src/
 │   ├── components/
@@ -40,13 +40,21 @@ repository/
 └── README.md
 ```
 
-The `rtfmd` directory contains:
+- **rtfmd/files/**: Mirrors the repository's structure, with each source file having an associated reasoning trace file.
+- **rtfmd/knowledge/**: Contains domain-specific knowledge and best practices.
+- **rtfmd/decisions/**: Stores high-level architectural decisions and design records.
 
-1. **files/**: Mirrors the repository structure with reasoning trace files for each code file
-2. **knowledge/**: Domain-specific knowledge documents organized by category
-3. **decisions/**: High-level architectural and design decision records
+## Automated Reasoning Trace Generation via Language Models
 
-## Tag System
+Our framework relies on LMs to generate, update, and refine reasoning traces based on full repository context. Key aspects include:
+
+- **Automatic Updates:** Every time a code file is changed, the LM automatically generates or updates the corresponding shadow file in `rtfmd/files/` to document the reasoning behind the change.
+- **Context Enrichment:** When the LM encounters the `rtfmd/` folder at the repository root, it pulls in additional context—such as domain knowledge, past decisions, and style guidelines—to inform its generated reasoning trace.
+- **Issue Resolution Updates:** If an issue is resolved, the LM is instructed (via its prompt framework) to append new context or follow-up notes to the reasoning trace, ensuring that the documentation reflects the current state of the project.
+
+This LM-driven process reduces manual overhead and ensures that the rationale for code changes evolves alongside the code.
+
+## Comprehensive Tag System
 
 The RTF.md tag system is organized into categories that reflect the actual experiences and thought processes in development:
 
@@ -278,17 +286,19 @@ The RTF.md tag system is organized into categories that reflect the actual exper
 </knowledge-refs>
 ```
 
-## Implementation Approach
+## Knowledge Repository
 
-RTF.md is designed to be implemented using:
+The `/rtfmd/knowledge/` directory contains domain-specific information relevant to the codebase:
 
-1. **LLM Integration**: Large language models with access to repository context generate and maintain reasoning traces.
+1. **Technology Guides**: Best practices, patterns, and conventions for technologies used in the project
 
-2. **GitHub Workflow**: Reasoning traces are created or updated alongside commits through GitHub actions or hooks.
+2. **Domain Models**: Explanations of business domain concepts and their relationships
 
-3. **Progressive Implementation**: Start with critical files and gradually expand coverage across repositories.
+3. **API References**: Current documentation for internal/external APIs used by the codebase
 
-4. **Version History**: Maintain historical reasoning while adding new insights, preserving the evolution of thought.
+4. **Design Standards**: UI/UX guidelines, accessibility standards, and design systems
+
+Each knowledge document follows a similar tagged structure but focuses on providing context rather than reasoning traces. All knowledge documents include a "Last Updated" timestamp to provide temporal context.
 
 ## Usage Pattern
 
@@ -339,26 +349,22 @@ Example pattern for a bug fix:
 </follow-up>
 ```
 
-## Knowledge Repository
+## Implementation Approach
 
-The `/rtfmd/knowledge/` directory contains domain-specific information relevant to the codebase:
+RTF.md is designed to be implemented using:
 
-1. **Technology Guides**: Best practices, patterns, and conventions for technologies used in the project
+1. **LM Integration**: Large language models with access to repository context generate and maintain reasoning traces.
 
-2. **Domain Models**: Explanations of business domain concepts and their relationships
+2. **Progressive Implementation**: Start with critical files and gradually expand coverage across repositories.
 
-3. **API References**: Current documentation for internal/external APIs used by the codebase
-
-4. **Design Standards**: UI/UX guidelines, accessibility standards, and design systems
-
-Each knowledge document follows a similar tagged structure but focuses on providing context rather than reasoning traces. All knowledge documents include a "Last Updated" timestamp to provide temporal context.
+3. **Version History**: Maintain historical reasoning while adding new insights, preserving the evolution of thought.
 
 ## Benefits
 
 1. **Root Cause Preservation**: Captures why changes were made, not just what changed
 2. **Learning from Failures**: Documents bugs, errors, and dead ends to prevent repetition
 3. **Context Transfer**: New developers understand not just code but thinking behind it
-4. **LLM Enhancement**: Provides rich context for AI systems to make better predictions
+4. **LM Enhancement**: Provides rich context for AI systems to make better predictions
 5. **Historical Intelligence**: Builds a repository of problem-solving approaches
 6. **Domain Knowledge Preservation**: Captures specialized expertise that might otherwise be lost
 
@@ -368,31 +374,17 @@ To implement RTF.md in your repository:
 
 1. Create the initial directory structure:
    ```bash
-   mkdir -p rtfmd/files rtfmd/knowledge rtfmd/decisions
+   mkdir -p rtfmd/files rtfmd/knowledge rtfmd/decisions rtfmd/assets
    ```
 
-2. Create a `.github/workflows/rtf.yml` file that triggers reasoning trace generation
-   ```yaml
-   name: Generate RTF.md Traces
-   on:
-     push:
-       branches: [ main, develop ]
-   jobs:
-     generate-traces:
-       runs-on: ubuntu-latest
-       steps:
-         - uses: actions/checkout@v3
-         - name: Generate Reasoning Traces
-           uses: rtfmd/github-action@v1
-           with:
-             files: "changed"
-             llm-provider: "openai"
-             api-key: ${{ secrets.LLM_API_KEY }}
+2. Add your logo to the assets directory:
+   ```bash
+   # Save your logo as rtfmd/assets/rtfmd-logo.png
    ```
 
-3. Configure the workflow to use an LLM to generate traces for each committed file
-4. Review and enhance generated traces during code review
-5. Use the traces when onboarding new developers or making significant changes
+3. Configure your LM to recognize and utilize the `rtfmd` folder structure
+4. Begin documenting reasoning traces for your most critical or complex files
+5. Gradually expand coverage as you develop familiarity with the framework
 
 ## Examples
 
@@ -407,7 +399,7 @@ See the [examples/](examples/) directory for sample reasoning traces across diff
 Contributions to RTF.md are welcome! We're particularly interested in:
 - Real-world experiences implementing the framework
 - Additional tag suggestions based on development scenarios
-- Integration tools for different development environments
+- Integration tools for different LM environments
 - Case studies of how RTF.md improved development processes
 
 ## License
