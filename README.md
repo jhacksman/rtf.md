@@ -1,5 +1,9 @@
 # rtf.md: Reasoning Trace Framework in Markdown
 
+<p align="center">
+  <img src="rtfmd/assets/rtfmd-logo.png" alt="RTF.md Logo" width="250"/>
+</p>
+
 ## Project Overview
 
 rtf.md is a comprehensive framework for capturing the reasoning traces behind every file in a code repository. Unlike traditional documentation, RTF.md preserves the actual thought processes, decision pathways, and context that led to code creation and changes, addressing technical debt by making implicit knowledge explicit.
