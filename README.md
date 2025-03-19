@@ -170,6 +170,28 @@ The RTF.md tag system is organized into categories that reflect the actual exper
 </knowledge-gap>
 ```
 
+### Human Priors Tags
+```markdown
+<domain-knowledge>
+  [Specialized knowledge applied]
+  [Industry-specific considerations]
+  [How domain expertise influenced decisions]
+  [Links to /knowledge/domain-specific-docs.md]
+</domain-knowledge>
+
+<mental-model>
+  [Conceptual frameworks used]
+  [How mental models guided implementation]
+  [Evolution of understanding during development]
+</mental-model>
+
+<intuition>
+  [Gut feelings that influenced decisions]
+  [How intuition was validated or disproven]
+  [Experience-based shortcuts taken]
+</intuition>
+```
+
 ### Emotional/Situational Tags
 ```markdown
 <frustration>
@@ -227,7 +249,8 @@ RTF.md is designed to be implemented using:
 
 A typical RTF.md file contains only the relevant tags for that particular file and situation. Tags are used contextually rather than trying to fill every tag for every file.
 
-Example pattern for a bug fix:
+### Example: Bug Fix with Knowledge Reference
+
 ```markdown
 <metadata>
   author: developer-id-123
@@ -252,6 +275,12 @@ Example pattern for a bug fix:
   Tablets with unusual aspect ratios were still failing.
   Added dedicated tablet detection logic.
 </edge-case>
+
+<domain-knowledge>
+  Applied OAuth 2.0 best practices for token validation.
+  Implemented PKCE extension for public clients as recommended.
+  [See OAuth 2.0 implementation guide](/knowledge/api/oauth2-spec-2025-03-18.md)
+</domain-knowledge>
 
 <security>
   Implemented password hashing with BCrypt.
@@ -287,13 +316,106 @@ To implement RTF.md in your repository:
 3. Review and enhance generated traces during code review
 4. Use the traces when onboarding new developers or making significant changes
 
-## Example
+### GitHub Actions Implementation
+
+Here's an example GitHub Actions workflow that automatically generates reasoning traces for changed files:
+
+```yaml
+name: Generate Reasoning Traces
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    types: [ opened, synchronize ]
+    branches: [ main ]
+    
+jobs:
+  generate-traces:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Fetch all history for proper diff analysis
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+          
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install openai
+          
+      - name: Identify changed files
+        id: changed-files
+        run: |
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            # For PRs, compare with the base branch
+            echo "CHANGED_FILES=$(git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.sha }} | grep -v '\.md$' | tr '\n' ' ')" >> $GITHUB_ENV
+          else
+            # For pushes, compare with the previous commit
+            echo "CHANGED_FILES=$(git diff --name-only HEAD^ HEAD | grep -v '\.md$' | tr '\n' ' ')" >> $GITHUB_ENV
+          fi
+          
+      - name: Generate reasoning traces
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python scripts/generate_traces.py --files "${{ env.CHANGED_FILES }}"
+          
+      - name: Commit and push reasoning traces
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "GitHub Actions"
+          
+          # Stage only the generated .md files
+          for file in ${{ env.CHANGED_FILES }}; do
+            trace_file=".${file}.md"
+            if [ -f "$trace_file" ]; then
+              git add "$trace_file"
+            fi
+          done
+          
+          # Only commit if there are changes
+          if git diff --staged --quiet; then
+            echo "No reasoning traces to commit"
+          else
+            git commit -m "Add reasoning traces for changed files [skip ci]"
+            git push
+          fi
+```
+
+This workflow:
+1. Triggers on pushes to main and pull requests
+2. Identifies files that have changed (excluding .md files)
+3. Calls a Python script to generate reasoning traces using OpenAI's API
+4. Commits and pushes only the generated trace files
+
+You'll need to create the `scripts/generate_traces.py` script that uses the OpenAI API to generate reasoning traces based on file content and context.
+
+## Examples
 
 See the [examples/](examples/) directory for sample reasoning traces across different scenarios:
 - Bug fixes
 - Feature implementations
 - Refactoring efforts
 - Performance optimizations
+
+### Historical Evolution Example
+
+The [examples/historical-evolution/](examples/historical-evolution/) directory demonstrates how reasoning traces evolve over time as code changes and understanding deepens:
+
+- **Version 1.0.0**: Initial implementation with basic JWT authentication
+- **Version 1.1.0**: Bug fix for token expiration and improved error handling
+- **Version 2.0.0**: Major refactoring with secure storage and token refresh
+
+This example shows how the reasoning trace grows richer over time, capturing:
+- The evolution of understanding (from simple token storage to complete security model)
+- How technical debt is addressed across versions
+- How new knowledge is incorporated into the codebase
+- The progression of code quality and security considerations
 
 ## Contributing
 
